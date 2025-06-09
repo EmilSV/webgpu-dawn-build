@@ -28,7 +28,7 @@ elseif ($osMacOS) {
 }
 elseif ($osLinux) {
     # For Linux, we assume a Debian-based distribution (like Ubuntu)
-    sudo apt-get install -y git cmake python3 python3-pip python3-venv clang
+    sudo apt-get install -y git cmake python3 python3-pip python3-venv clang libx11-dev libx11-xcb-dev libxcb1-dev
 }
 
 
@@ -141,15 +141,11 @@ elseif ($osMacOS) {
     Copy-Item .\dawn_build\src\dawn\native\Release\libwebgpu_dawn.dylib "$outputFolder\libwebgpu_dawn.dylib"
 }
 
-elseif ($osMacOS) {
+elseif ($osLinux) {
     #copy header to output folder"
     Copy-Item .\dawn_build\gen\include\dawn\webgpu.h "$outputFolder\webgpu.h"
     #copy so to output folder"
     Copy-Item .\dawn_build\src\dawn\native\libwebgpu_dawn.so "$outputFolder\libwebgpu_dawn.a"
-    #copy dylib to output folder"
-    # Copy-Item .\dawn_build\src\dawn\native\Release\libwebgpu_dawn.dylib "$outputFolder\libwebgpu_dawn.dylib"
-    
-
 }
 
 Set-Location ..
