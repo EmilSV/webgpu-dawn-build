@@ -145,7 +145,7 @@ elseif ($osLinux) {
     #copy header to output folder"
     Copy-Item .\dawn_build\gen\include\dawn\webgpu.h "$outputFolder\webgpu.h"
     #copy so to output folder"
-    Copy-Item .\dawn_build\src\dawn\native\libwebgpu_dawn.so "$outputFolder\libwebgpu_dawn.a"
+    Copy-Item .\dawn_build\src\dawn\native\libwebgpu_dawn.so "$outputFolder\libwebgpu_dawn.so"
 }
 
 Set-Location ..
