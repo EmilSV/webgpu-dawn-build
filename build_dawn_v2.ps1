@@ -126,11 +126,11 @@ write-host "copying files to output folder"
 if ($osWindows) {
 
     #copy header to output folder"
-    Copy-Item .\dawn.build-$architecture\gen\include\dawn\webgpu.h "$outputFolder\webgpu.h"
+    Copy-Item .\dawn_build_$architecture\gen\include\dawn\webgpu.h "$outputFolder\webgpu.h"
     #copy lib to output folder"
-    Copy-Item .\dawn.build-$architecture\src\dawn\native\Release\webgpu_dawn.lib "$outputFolder\webgpu_dawn.lib"
+    Copy-Item .\dawn_build_$architecture\src\dawn\native\Release\webgpu_dawn.lib "$outputFolder\webgpu_dawn.lib"
     #copy dll to output folder"
-    Copy-Item .\dawn.build-$architecture\Release\webgpu_dawn.dll "$outputFolder\webgpu_dawn.dll"
+    Copy-Item .\dawn_build_$architecture\Release\webgpu_dawn.dll "$outputFolder\webgpu_dawn.dll"
 }
 elseif ($osMacOS) {
     #copy header to output folder"
