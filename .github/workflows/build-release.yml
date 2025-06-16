@@ -1,15 +1,9 @@
 name: Build Release
 
 on:
-  release:
-    types: [created]
-  workflow_dispatch:
-    inputs:
-      dawn_sha:
-        description: 'Dawn SHA to build'
-        required: true
-        type: string
-
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -20,11 +14,22 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Set up PowerShell
+      - name: Read action args on Windows
         if: runner.os == 'Windows'
-        uses: pwsh/pwsh@v1
+        id: read-args-windows
+        shell: pwsh
+        run: |
+          $args = Get-Content -Path "action_args.json" | ConvertFrom-Json
+          echo "sha=$($args.sha)" >> $env:GITHUB_OUTPUT
+
+      - name: Read action args on macOS/Linux
+        if: runner.os != 'Windows'
+        id: read-args-unix
+        run: |
+          sha=$(cat action_args.json | grep -o '"sha": *"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"')
+          echo "sha=$sha" >> $GITHUB_OUTPUT
 
       - name: Install PowerShell on macOS
         if: runner.os == 'macOS'
@@ -74,7 +79,8 @@ jobs:
 
       - name: Build project
         run: |
-          pwsh build_dawn_v2.ps1 -sha ${{ github.event.inputs.dawn_sha || github.sha }} -architecture x64 -skipDependencies false
+          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }} -skipDependencies
+
 
       - name: Create zip archive on Windows
         if: runner.os == 'Windows'
