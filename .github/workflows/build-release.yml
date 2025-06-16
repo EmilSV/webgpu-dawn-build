@@ -54,9 +54,19 @@ jobs:
       - name: Install dependencies on Windows
         if: runner.os == 'Windows'
         run: |
-          winget install -e --id Git.Git
-          winget install -e --id Kitware.CMake
-          winget install -e --id Python.Python.3.9
+          # Install winget if not available
+          if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
+            Write-Host "Installing winget..."
+            $progressPreference = 'silentlyContinue'
+            Invoke-WebRequest -Uri https://aka.ms/getwinget -OutFile Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+            Add-AppxPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
+          }
+          
+          # Install dependencies
+          winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements
+          winget install -e --id Kitware.CMake --accept-source-agreements --accept-package-agreements
+          winget install -e --id Python.Python.3.9 --accept-source-agreements --accept-package-agreements
+        shell: pwsh
 
       
       - name: Install Windows SDK v10.0.26100.0
