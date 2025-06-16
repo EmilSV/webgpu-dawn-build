@@ -93,7 +93,7 @@ jobs:
           cd dawn_build_output && zip -r "../dawn-${{ runner.os }}-x64.zip" . && cd ..
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dawn-${{ runner.os }}-x64
           path: dawn-${{ runner.os }}-x64.zip
