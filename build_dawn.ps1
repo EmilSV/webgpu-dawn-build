@@ -73,7 +73,7 @@ try {
     if ($osWindows) {
         cmake `
             -B dawn_build_$architecture `
-            -A $architecture `
+            -A $architecture,version=10.0.26100.0 `
             -D DAWN_FETCH_DEPENDENCIES=ON `
             -D CMAKE_BUILD_TYPE=Release `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
@@ -104,7 +104,7 @@ try {
 
         cmake `
             -B dawn_build`
-        -D DAWN_FETCH_DEPENDENCIES=ON `
+            -D DAWN_FETCH_DEPENDENCIES=ON `
             -D CMAKE_BUILD_TYPE=Release `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
             -D CMAKE_POLICY_DEFAULT_CMP0092=NEW `
