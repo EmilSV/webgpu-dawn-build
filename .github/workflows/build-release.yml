@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -23,13 +27,16 @@ jobs:
         run: |
           $args = Get-Content -Path "action_args.json" | ConvertFrom-Json
           echo "sha=$($args.sha)" >> $env:GITHUB_OUTPUT
+          echo "releaseTag=$($args.releaseTag)" >> $env:GITHUB_OUTPUT
 
       - name: Read action args on macOS/Linux
         if: runner.os != 'Windows'
         id: read-args-unix
         run: |
-          sha=$(cat action_args.json | grep -o '"sha": *"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"')
+          sha=$(jq -r '.sha' action_args.json)
+          releaseTag=$(jq -r '.releaseTag' action_args.json)
           echo "sha=$sha" >> $GITHUB_OUTPUT
+          echo "releaseTag=$releaseTag" >> $GITHUB_OUTPUT
 
       - name: Install PowerShell on macOS
         if: runner.os == 'macOS'
@@ -53,7 +60,7 @@ jobs:
 
       - name: Build project
         run: |
-          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }}
+          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }}"
 
 
       - name: Create zip archive on Windows
@@ -72,13 +79,8 @@ jobs:
           name: dawn-${{ runner.os }}-x64
           path: dawn-${{ runner.os }}-x64.zip
 
-      - name: Upload to release
-        if: github.event_name == 'release'
-        uses: actions/upload-release-asset@v1
+      - name: Creates a release in GitHub and uploads attachments
+        run: |
+            gh release create ${{ steps.read-args-windows.outputs.releaseTag || steps.read-args-unix.outputs.releaseTag }} dawn-${{ runner.os }}-x64.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: dawn-${{ runner.os }}-x64.zip
-          asset_name: dawn-${{ runner.os }}-x64.zip
-          asset_content_type: application/zip
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
