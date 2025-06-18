@@ -32,21 +32,19 @@ if (-not $skipDependencies) {
             Write-Host "winget is already installed."
         }
 
-
         # Accept source agreements non-interactively
-        winget source update
+        winget source update --disable-interactivity
         
-        # Install packages with --accept-source-agreements and --accept-package-agreements flags
-        winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements --silent
-        winget install -e --id Kitware.CMake --accept-source-agreements --accept-package-agreements --silent
-        winget install -e --id Python.Python.3.9 --accept-source-agreements --accept-package-agreements --silent
-        winget install -e --id Microsoft.VisualStudio.2022.BuildTools --accept-source-agreements --accept-package-agreements --silent
+        # Install packages with all non-interactive flags
+        winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements --silent --disable-interactivity
+        winget install -e --id Kitware.CMake --accept-source-agreements --accept-package-agreements --silent --disable-interactivity
+        winget install -e --id Python.Python.3.9 --accept-source-agreements --accept-package-agreements --silent --disable-interactivity
+        winget install -e --id Microsoft.VisualStudio.2022.BuildTools --accept-source-agreements --accept-package-agreements --silent --disable-interactivity
 
         # Wait a moment for VS Build Tools to install before modifying
         Start-Sleep -Seconds 30
         
-
-        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --quiet --wait
+        "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --quiet --wait
     }
     elseif ($osMacOS) {
         brew install cmake
@@ -69,7 +67,7 @@ try {
     if ($osWindows) {
         cmake `
             -B dawn_build_$architecture `
-            -A $architecture,version=10.0.26100.0 `
+            -A $architecture `
             -D DAWN_FETCH_DEPENDENCIES=ON `
             -D CMAKE_BUILD_TYPE=Release `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
