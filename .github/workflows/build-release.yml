@@ -60,7 +60,7 @@ jobs:
 
       - name: Build project
         run: |
-          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }}"
+          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }}
 
 
       - name: Create zip archive on Windows
