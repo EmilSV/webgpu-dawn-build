@@ -20,9 +20,37 @@ write-host "installing dependencies..."
 
 if (-not $skipDependencies) {
     if ($osWindows) {
+
+        if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
+            Write-Host "winget not found. Installing winget..."
+            
+            # Download and install App Installer (which includes winget)
+            $appInstallerUrl = "https://aka.ms/getwinget"
+            $tempPath = "$env:TEMP\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+            
+            try {
+                Invoke-WebRequest -Uri $appInstallerUrl -OutFile $tempPath
+                Add-AppxPackage -Path $tempPath
+                Write-Host "winget installed successfully."
+                Remove-Item $tempPath -Force
+            }
+            catch {
+                Write-Host "Failed to install winget automatically. Please install it manually from Microsoft Store or GitHub."
+                Write-Host "Download from: https://github.com/microsoft/winget-cli/releases"
+                exit 1
+            }
+        }
+        else {
+            Write-Host "winget is already installed."
+        }
+
+
         winget install -e --id Git.Git
         winget install -e --id Kitware.CMake
         winget install -e --id Python.Python.3.9
+        winget install -e --id Microsoft.VisualStudio.2022.BuildTools
+
+        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --quiet --wait
     }
     elseif ($osMacOS) {
         brew install cmake

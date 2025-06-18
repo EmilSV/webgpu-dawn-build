@@ -51,35 +51,9 @@ jobs:
           # Install PowerShell
           sudo apt-get install -y powershell
 
-      - name: Install dependencies on Windows
-        if: runner.os == 'Windows'
-        run: |
-          # Install dependencies using Chocolatey
-          choco install git cmake python3 -y
-        shell: pwsh
-
-      
-      - name: Install Windows SDK v10.0.26100.0
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: |
-          "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" --quiet --force --norestart --add Microsoft.VisualStudio.Component.Windows11SDK.26100
-
-
-      - name: Install dependencies on macOS
-        if: runner.os == 'macOS'
-        run: |
-          brew install cmake
-          brew install python@3.9
-
-      - name: Install dependencies on Linux
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install -y git cmake python3 python3-pip python3-venv clang libx11-dev libx11-xcb-dev libxcb1-dev
-
       - name: Build project
         run: |
-          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }} -skipDependencies
+          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }}
 
 
       - name: Create zip archive on Windows
