@@ -43,8 +43,14 @@ if (-not $skipDependencies) {
 
         # Wait a moment for VS Build Tools to install before modifying
         Start-Sleep -Seconds 30
-        
-        "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --quiet --wait
+
+        Start-Process -FilePath "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" `
+            -ArgumentList "modify", `
+                        "--installPath", "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools", `
+                        "--add", "Microsoft.VisualStudio.Component.Windows11SDK.26100", `
+                        "--quiet", `
+                        "--wait" `
+            -Wait
     }
     elseif ($osMacOS) {
         brew install cmake
