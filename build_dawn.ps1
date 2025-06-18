@@ -24,31 +24,27 @@ if (-not $skipDependencies) {
         if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
             Write-Host "winget not found. Installing winget..."
             
-            # Download and install App Installer (which includes winget)
-            $appInstallerUrl = "https://aka.ms/getwinget"
-            $tempPath = "$env:TEMP\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
-            
-            try {
-                Invoke-WebRequest -Uri $appInstallerUrl -OutFile $tempPath
-                Add-AppxPackage -Path $tempPath
-                Write-Host "winget installed successfully."
-                Remove-Item $tempPath -Force
-            }
-            catch {
-                Write-Host "Failed to install winget automatically. Please install it manually from Microsoft Store or GitHub."
+                Write-Host "Failed to find winget automatically. Please install it manually from Microsoft Store or GitHub."
                 Write-Host "Download from: https://github.com/microsoft/winget-cli/releases"
                 exit 1
-            }
         }
         else {
             Write-Host "winget is already installed."
         }
 
 
-        winget install -e --id Git.Git
-        winget install -e --id Kitware.CMake
-        winget install -e --id Python.Python.3.9
-        winget install -e --id Microsoft.VisualStudio.2022.BuildTools
+        # Accept source agreements non-interactively
+        winget source update
+        
+        # Install packages with --accept-source-agreements and --accept-package-agreements flags
+        winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements --silent
+        winget install -e --id Kitware.CMake --accept-source-agreements --accept-package-agreements --silent
+        winget install -e --id Python.Python.3.9 --accept-source-agreements --accept-package-agreements --silent
+        winget install -e --id Microsoft.VisualStudio.2022.BuildTools --accept-source-agreements --accept-package-agreements --silent
+
+        # Wait a moment for VS Build Tools to install before modifying
+        Start-Sleep -Seconds 30
+        
 
         & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" modify --installPath "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools" --add Microsoft.VisualStudio.Component.Windows11SDK.26100 --quiet --wait
     }
