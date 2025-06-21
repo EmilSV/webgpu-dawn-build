@@ -14,7 +14,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-2025]
+        # os: [windows-2025, macOS, ubuntu-latest]
+        os: [windows-2025,ubuntu-latest]
 
     steps:
       - name: Checkout code
@@ -84,3 +85,36 @@ jobs:
             gh release create ${{ steps.read-args-windows.outputs.releaseTag || steps.read-args-unix.outputs.releaseTag }} dawn-${{ runner.os }}-x64.zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read action args
+        id: read-args
+        run: |
+          sha=$(jq -r '.sha' action_args.json)
+          releaseTag=$(jq -r '.releaseTag' action_args.json)
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+          echo "releaseTag=$releaseTag" >> $GITHUB_OUTPUT
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: ./artifacts
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          ls -la ./artifacts/
+
+      - name: Create GitHub release with all artifacts
+        run: |
+          gh release create ${{ steps.read-args.outputs.releaseTag }} ./artifacts/*.zip --title "Dawn Build ${{ steps.read-args.outputs.releaseTag }}" --notes "Automated build from commit ${{ steps.read-args.outputs.sha }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          

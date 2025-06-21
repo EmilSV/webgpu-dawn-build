@@ -2,12 +2,6 @@
 
 This project automates the build process for the WebGPU Dawn project across multiple platforms: Windows, macOS, and Linux. It utilizes a PowerShell script to handle the build configuration and output management.
 
-## Project Structure
-
-- **.github/workflows/build-release.yml**: Contains the GitHub Actions workflow configuration to automate the build process on release.
-- **build_dawn_v2.ps1**: A PowerShell script that automates the build process. It includes parameters for the commit SHA, output folder, architecture, and an option to skip dependencies.
-- **README.md**: Documentation for the project.
-
 ## Usage
 
 To build the WebGPU Dawn project, follow these steps:
