@@ -98,7 +98,7 @@ try {
             -D TINT_BUILD_CMD_TOOLS=ON `
 
         Set-Variable -Name "CL" -Value "/Wv:18"
-        cmake --build dawn_build_$architecture --config Release --target webgpu_dawn --parallel
+        cmake --build dawn_build_$architecture --config Release --target webgpu_dawn
     }
     elseif ($osMacOS) {
 
@@ -119,7 +119,7 @@ try {
             -D TINT_BUILD_TESTS=OFF `
             -D DAWN_BUILD_MONOLITHIC_LIBRARY=ON 
 
-        cmake --build dawn_build --config Release --target webgpu_dawn --parallel
+        cmake --build dawn_build --config Release --target webgpu_dawn
     }
     elseif ($osLinux) {
 
@@ -144,7 +144,7 @@ try {
             -D DAWN_BUILD_MONOLITHIC_LIBRARY=ON `
             -D TINT_BUILD_TESTS=OFF `
 
-        cmake --build dawn_build --config Release --target webgpu_dawn --parallel
+        cmake --build dawn_build --config Release --target webgpu_dawn
     }
 
     write-host "build finished"
