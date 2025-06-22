@@ -79,12 +79,6 @@ jobs:
         with:
           name: dawn-${{ runner.os }}-x64
           path: dawn-${{ runner.os }}-x64.zip
-
-      - name: Creates a release in GitHub and uploads attachments
-        run: |
-            gh release create ${{ steps.read-args-windows.outputs.releaseTag || steps.read-args-unix.outputs.releaseTag }} dawn-${{ runner.os }}-x64.zip
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   release:
     runs-on: ubuntu-latest
