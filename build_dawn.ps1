@@ -103,7 +103,7 @@ try {
     elseif ($osMacOS) {
 
         cmake `
-            -B dawn_build`
+            -B dawn_build `
             -D DAWN_FETCH_DEPENDENCIES=ON `
             -D CMAKE_BUILD_TYPE=Release `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
@@ -117,7 +117,7 @@ try {
             -D DAWN_USE_GLFW=OFF `
             -D DAWN_BUILD_SAMPLES=OFF `
             -D TINT_BUILD_TESTS=OFF `
-            -D DAWN_BUILD_MONOLITHIC_LIBRARY=ON 
+            -D DAWN_BUILD_MONOLITHIC_LIBRARY=ON `
 
         cmake --build dawn_build --config Release --target webgpu_dawn
     }
