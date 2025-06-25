@@ -58,7 +58,7 @@ if (-not $skipDependencies) {
     }
     elseif ($osLinux) {
         # For Linux, we assume a Debian-based distribution (like Ubuntu)
-        sudo apt-get install -y git cmake python3 python3-pip python3-venv clang libx11-dev libx11-xcb-dev libxcb1-dev
+        sudo apt-get install -y git cmake python3 python3-pip python3-venv clang libc++-dev libc++abi-dev libx11-dev libx11-xcb-dev libxcb1-dev
     }
 }
 
@@ -131,6 +131,9 @@ try {
             -D CMAKE_C_COMPILER=clang `
             -D CMAKE_CXX_STANDARD=20 `
             -D CMAKE_CXX_STANDARD_REQUIRED=ON `
+            -D CMAKE_CXX_FLAGS="-stdlib=libc++" `
+            -D CMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" `
+            -D CMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++" `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
             -D CMAKE_POLICY_DEFAULT_CMP0092=NEW `
             -D DAWN_BUILD_SAMPLES=OFF `
