@@ -58,7 +58,7 @@ jobs:
       - name: Install PowerShell on Linux
         if: runner.os == 'Linux'
         run: |
-          sudo snap install powershell --classic
+          sudo snap install powershell --classic || snap install --edge powershell
 
       - name: Build project
         run: |
