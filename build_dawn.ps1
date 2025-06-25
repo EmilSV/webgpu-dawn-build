@@ -129,6 +129,8 @@ try {
             -D CMAKE_BUILD_TYPE=Release `
             -D CMAKE_CXX_COMPILER=clang++ `
             -D CMAKE_C_COMPILER=clang `
+            -D CMAKE_CXX_STANDARD=17 `
+            -D CMAKE_CXX_STANDARD_REQUIRED=ON `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
             -D CMAKE_POLICY_DEFAULT_CMP0092=NEW `
             -D DAWN_BUILD_SAMPLES=OFF `
