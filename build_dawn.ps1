@@ -131,9 +131,9 @@ try {
             -D CMAKE_C_COMPILER=clang `
             -D CMAKE_CXX_STANDARD=20 `
             -D CMAKE_CXX_STANDARD_REQUIRED=ON `
-            -D CMAKE_CXX_FLAGS="-stdlib=libc++" `
-            -D CMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" `
-            -D CMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++" `
+            -D CMAKE_CXX_FLAGS="-stdlib=libc++ -s" `
+            -D CMAKE_EXE_LINKER_FLAGS="-stdlib=libc++ -s" `
+            -D CMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++ -s" `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
             -D CMAKE_POLICY_DEFAULT_CMP0092=NEW `
             -D DAWN_BUILD_SAMPLES=OFF `
