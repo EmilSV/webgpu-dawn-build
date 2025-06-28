@@ -20,6 +20,9 @@ jobs:
       should_build: ${{ steps.check-release.outputs.should_build }}
     steps:
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Get latest stable Chromium version and Dawn branch
         id: get-chromium-version
         run: |
@@ -53,10 +56,6 @@ jobs:
           short_sha=$(echo "$sha" | cut -c1-7)
           release_tag="dawn-m${milestone}-${short_sha}"
 
-          echo "Checking if release $release_tag exists..."
-          release_output=$(gh release view "$release_tag")
-          echo "gh release view output: $release_output"
-          
           # Check if release already exists
           if gh release view "$release_tag" > /dev/null 2>&1; then
             echo "Release $release_tag already exists, skipping build"
