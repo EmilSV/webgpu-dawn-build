@@ -35,7 +35,7 @@ jobs:
       - name: get newest commit SHA
         id: get-newest-SHA
         run: |
-          sha=$(git ls-remote https://dawn.googlesource.com/dawn origin/chromium/${{ steps.get-chromium-version.outputs.dawn_branch }} | cut -f1)
+          sha=$(git ls-remote https://dawn.googlesource.com/dawn chromium/${{ steps.get-chromium-version.outputs.dawn_branch }} | cut -f1)
           echo "Found SHA: $sha"
           echo "sha=$sha" >> $GITHUB_OUTPUT
 
