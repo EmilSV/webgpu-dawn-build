@@ -9,8 +9,63 @@ permissions:
   contents: write
 
 jobs:
+  GetDawnVersion:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.get-newest-SHA.outputs.sha }}
+      release_tag: ${{ steps.check-release.outputs.release_tag }}
+      should_build: ${{ steps.check-release.outputs.should_build }}
+    steps:
+
+      - name: Get latest stable Chromium version and Dawn branch
+        id: get-chromium-version
+        run: |
+          # Fetch Chromium milestone data
+          response=$(curl -s "https://chromiumdash.appspot.com/fetch_milestones?only_branched=true")
+          
+          # Find the newest stable milestone
+          stable_milestone=$(echo "$response" | jq -r '.[] | select(.schedule_phase == "stable" and .schedule_active == true) | .milestone' | sort -nr | head -1)
+          
+          # Get the Dawn branch for this milestone
+          dawn_branch=$(echo "$response" | jq -r ".[] | select(.milestone == $stable_milestone) | .dawn_branch")
+          
+          echo "Found stable milestone: $stable_milestone with Dawn branch: $dawn_branch"
+          echo "dawn_branch=$dawn_branch" >> $GITHUB_OUTPUT
+
+      - name: get newest commit SHA
+        id: get-newest-SHA
+        run: |
+          sha=$(git ls-remote https://dawn.googlesource.com/dawn origin/chromium/${{ steps.get-chromium-version.outputs.dawn_branch }} | cut -f1)
+          echo "Found SHA: $sha"
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+
+      - name: Check if release already exists
+        id: check-release
+        run: |
+          sha="${{ steps.get-newest-SHA.outputs.sha }}"
+          milestone="${{ steps.get-chromium-version.outputs.milestone }}"
+          
+          # Create a release tag based on milestone and short SHA
+          short_sha=$(echo "$sha" | cut -c1-7)
+          release_tag="dawn-m${milestone}-${short_sha}"
+          
+          # Check if release already exists
+          if gh release view "$release_tag" > /dev/null 2>&1; then
+            echo "Release $release_tag already exists, skipping build"
+            echo "should_build=false" >> $GITHUB_OUTPUT
+          else
+            echo "Release $release_tag does not exist, proceeding with build"
+            echo "should_build=true" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
     runs-on: ${{ matrix.os }}
+    needs: GetDawnVersion
+    if: needs.GetDawnVersion.outputs.should_build == 'true'
 
     strategy:
       matrix:
@@ -32,24 +87,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Read action args on Windows
-        if: runner.os == 'Windows'
-        id: read-args-windows
-        shell: pwsh
-        run: |
-          $args = Get-Content -Path "action_args.json" | ConvertFrom-Json
-          echo "sha=$($args.sha)" >> $env:GITHUB_OUTPUT
-          echo "releaseTag=$($args.releaseTag)" >> $env:GITHUB_OUTPUT
-
-      - name: Read action args on macOS/Linux
-        if: runner.os != 'Windows'
-        id: read-args-unix
-        run: |
-          sha=$(jq -r '.sha' action_args.json)
-          releaseTag=$(jq -r '.releaseTag' action_args.json)
-          echo "sha=$sha" >> $GITHUB_OUTPUT
-          echo "releaseTag=$releaseTag" >> $GITHUB_OUTPUT
-
       - name: Install PowerShell on macOS
         if: runner.os == 'macOS'
         run: |
@@ -62,7 +99,7 @@ jobs:
 
       - name: Build project
         run: |
-          pwsh build_dawn.ps1 -sha ${{ steps.read-args-windows.outputs.sha || steps.read-args-unix.outputs.sha }} -architecture ${{ matrix.arch }}
+          pwsh build_dawn.ps1 -sha ${{ needs.GetDawnVersion.outputs.sha }} -architecture ${{ matrix.arch }}
 
       - name: Create zip archive on Windows
         if: runner.os == 'Windows'
@@ -82,18 +119,11 @@ jobs:
   
   release:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [GetDawnVersion, build]
+    if: needs.GetDawnVersion.outputs.should_build == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Read action args
-        id: read-args
-        run: |
-          sha=$(jq -r '.sha' action_args.json)
-          releaseTag=$(jq -r '.releaseTag' action_args.json)
-          echo "sha=$sha" >> $GITHUB_OUTPUT
-          echo "releaseTag=$releaseTag" >> $GITHUB_OUTPUT
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -108,7 +138,9 @@ jobs:
 
       - name: Create GitHub release with all artifacts
         run: |
-          gh release create ${{ steps.read-args.outputs.releaseTag }} ./artifacts/*.zip --title "Dawn Build ${{ steps.read-args.outputs.releaseTag }}" --notes "Automated build from commit ${{ steps.read-args.outputs.sha }}"
+          gh release create "${{ needs.GetDawnVersion.outputs.release_tag }}" ./artifacts/*.zip \
+            --title "Dawn Build ${{ needs.GetDawnVersion.outputs.release_tag }}" \
+            --notes "Automated build from Dawn commit ${{ needs.GetDawnVersion.outputs.sha }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
