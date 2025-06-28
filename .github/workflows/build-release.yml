@@ -53,7 +53,8 @@ jobs:
           short_sha=$(echo "$sha" | cut -c1-7)
           release_tag="dawn-m${milestone}-${short_sha}"
 
-          release_output=$(gh release view "$release_tag" 2>&1)
+          echo "Checking if release $release_tag exists..."
+          release_output=$(gh release view "$release_tag")
           echo "gh release view output: $release_output"
           
           # Check if release already exists
