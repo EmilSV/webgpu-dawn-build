@@ -30,6 +30,7 @@ jobs:
           dawn_branch=$(echo "$response" | jq -r ".[] | select(.milestone == $stable_milestone) | .dawn_branch")
           
           echo "Found stable milestone: $stable_milestone with Dawn branch: $dawn_branch"
+          echo "milestone=$stable_milestone" >> $GITHUB_OUTPUT
           echo "dawn_branch=$dawn_branch" >> $GITHUB_OUTPUT
 
       - name: get newest commit SHA
