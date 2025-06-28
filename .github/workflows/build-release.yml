@@ -52,6 +52,8 @@ jobs:
           # Create a release tag based on milestone and short SHA
           short_sha=$(echo "$sha" | cut -c1-7)
           release_tag="dawn-m${milestone}-${short_sha}"
+
+          echo gh release view "$release_tag"
           
           # Check if release already exists
           if gh release view "$release_tag" > /dev/null 2>&1; then
