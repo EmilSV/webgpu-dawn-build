@@ -106,7 +106,7 @@ try {
             -D DAWN_USE_GLFW=OFF `
             -D DAWN_ENABLE_SPIRV_VALIDATION=OFF `
             -D DAWN_DXC_ENABLE_ASSERTS_IN_NDEBUG=OFF `
-            -D DAWN_BUILD_MONOLITHIC_LIBRARY=ON `
+            -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
             -D TINT_BUILD_TESTS=OFF `
             -D TINT_BUILD_SPV_READER=ON `
             -D TINT_BUILD_SPV_WRITER=ON `
@@ -132,7 +132,7 @@ try {
             -D DAWN_USE_GLFW=OFF `
             -D DAWN_BUILD_SAMPLES=OFF `
             -D TINT_BUILD_TESTS=OFF `
-            -D DAWN_BUILD_MONOLITHIC_LIBRARY=ON `
+            -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
 
         cmake --build dawn_build --config Release --target webgpu_dawn
     }
@@ -161,7 +161,7 @@ try {
             -D DAWN_ENABLE_VULKAN=ON `
             -D DAWN_USE_GLFW=OFF `
             -D DAWN_ENABLE_SPIRV_VALIDATION=OFF `
-            -D DAWN_BUILD_MONOLITHIC_LIBRARY=ON `
+            -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
             -D TINT_BUILD_TESTS=OFF `
 
         cmake --build dawn_build --config Release --target webgpu_dawn
