@@ -121,18 +121,22 @@ try {
             -B dawn_build `
             -D DAWN_FETCH_DEPENDENCIES=ON `
             -D CMAKE_BUILD_TYPE=Release `
+            -D CMAKE_CXX_STANDARD=17 `
+            -D CMAKE_CXX_STANDARD_REQUIRED=ON `
+            -D CMAKE_CXX_FLAGS="-stdlib=libc++ -mmacosx-version-min=10.15" `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
             -D CMAKE_POLICY_DEFAULT_CMP0092=NEW `
             -D BUILD_SHARED_LIBS=OFF `
-            -D BUILD_SAMPLES=OFF `
+            -D DAWN_BUILD_SAMPLES=OFF `
             -D DAWN_BUILD_TESTS=OFF `
             -D DAWN_ENABLE_NULL=OFF `
             -D DAWN_ENABLE_OPENGLES=OFF `
             -D DAWN_ENABLE_METAL=ON `
             -D DAWN_USE_GLFW=OFF `
-            -D DAWN_BUILD_SAMPLES=OFF `
             -D TINT_BUILD_TESTS=OFF `
-            -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
+            -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED
+
+
 
         cmake --build dawn_build --config Release --target webgpu_dawn
     }
@@ -144,11 +148,11 @@ try {
             -D CMAKE_BUILD_TYPE=Release `
             -D CMAKE_CXX_COMPILER=clang++ `
             -D CMAKE_C_COMPILER=clang `
-            -D CMAKE_CXX_STANDARD=20 `
+            -D CMAKE_CXX_STANDARD=17 `
             -D CMAKE_CXX_STANDARD_REQUIRED=ON `
-            -D CMAKE_CXX_FLAGS="-stdlib=libc++ -s" `
-            -D CMAKE_EXE_LINKER_FLAGS="-stdlib=libc++ -s" `
-            -D CMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++ -s" `
+            -D CMAKE_CXX_FLAGS="-stdlib=libc++ -fPIC" `
+            -D CMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" `
+            -D CMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++" `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
             -D CMAKE_POLICY_DEFAULT_CMP0092=NEW `
             -D DAWN_BUILD_SAMPLES=OFF `
