@@ -24,9 +24,9 @@ if (-not $skipDependencies) {
         if (!(Get-Command winget -ErrorAction SilentlyContinue)) {
             Write-Host "winget not found. Installing winget..."
             
-                Write-Host "Failed to find winget automatically. Please install it manually from Microsoft Store or GitHub."
-                Write-Host "Download from: https://github.com/microsoft/winget-cli/releases"
-                exit 1
+            Write-Host "Failed to find winget automatically. Please install it manually from Microsoft Store or GitHub."
+            Write-Host "Download from: https://github.com/microsoft/winget-cli/releases"
+            exit 1
         }
         else {
             Write-Host "winget is already installed."
@@ -46,15 +46,30 @@ if (-not $skipDependencies) {
 
         Start-Process -FilePath "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vs_installer.exe" `
             -ArgumentList "modify", `
-                        "--installPath", "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools", `
-                        "--add", "Microsoft.VisualStudio.Component.Windows11SDK.26100", `
-                        "--quiet", `
-                        "--wait" `
+            "--installPath", "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools", `
+            "--add", "Microsoft.VisualStudio.Component.Windows11SDK.26100", `
+            "--quiet", `
+            "--wait" `
             -Wait
     }
     elseif ($osMacOS) {
-        brew install cmake
-        brew install python@3.9
+        $cmakeAlready = & brew list --versions cmake 2>$null
+        if ($cmakeAlready) {
+            $cmakeVersionLine = (& cmake --version 2>$null | Select-Object -First 1)
+            Write-Host "cmake already installed ($cmakeVersionLine). Skipping brew install cmake."
+            Write-Host "If you really need to replace it, run: brew uninstall cmake ; brew install cmake"
+        }
+        else {
+            brew install cmake
+        }
+
+        # Python: only install if python3 missing
+        if (Get-Command python3 -ErrorAction SilentlyContinue) {
+            Write-Host "python3 already installed ($(python3 --version)). Skipping brew install python@3.9."
+        }
+        else {
+            brew install python@3.9
+        }
     }
     elseif ($osLinux) {
         # For Linux, we assume a Debian-based distribution (like Ubuntu)
