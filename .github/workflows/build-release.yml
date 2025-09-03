@@ -81,8 +81,6 @@ jobs:
             arch: x64
           - os: windows-2025
             arch: arm64
-          - os: macos-15-large
-            arch: x64
           - os: macOS-latest
             arch: arm64
           - os: ubuntu-latest
