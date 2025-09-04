@@ -143,11 +143,6 @@ try {
             -D DAWN_BUILD_SAMPLES=OFF `
             -D TINT_BUILD_TESTS=OFF `
             -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
-            -D TINT_BUILD_SPV_READER=ON `
-            -D TINT_BUILD_SPV_WRITER=ON `
-            -D TINT_BUILD_WGSL_READER=ON `
-            -D TINT_BUILD_WGSL_WRITER=ON `
-            -D TINT_BUILD_MSL_WRITER=ON `
 
         cmake --build dawn_build_$architecture --config Release --target webgpu_dawn
     }
