@@ -117,8 +117,17 @@ try {
     }
     elseif ($osMacOS) {
 
+        # Map architecture parameter to CMake OSX architectures
+        $cmakeArch = switch ($architecture) {
+            "x86" { "i386" }
+            "x64" { "x86_64" }
+            "arm64" { "arm64" }
+            default { "x86_64" }  # Default to x86_64 for Intel Mac
+        }
+
         cmake `
-            -B dawn_build `
+            -B dawn_build_$architecture `
+            -D CMAKE_OSX_ARCHITECTURES=$cmakeArch `
             -D DAWN_FETCH_DEPENDENCIES=ON `
             -D CMAKE_BUILD_TYPE=Release `
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW `
@@ -129,12 +138,18 @@ try {
             -D DAWN_ENABLE_NULL=OFF `
             -D DAWN_ENABLE_OPENGLES=OFF `
             -D DAWN_ENABLE_METAL=ON `
+            -D DAWN_ENABLE_VULKAN=OFF `
             -D DAWN_USE_GLFW=OFF `
             -D DAWN_BUILD_SAMPLES=OFF `
             -D TINT_BUILD_TESTS=OFF `
             -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
+            -D TINT_BUILD_SPV_READER=ON `
+            -D TINT_BUILD_SPV_WRITER=ON `
+            -D TINT_BUILD_WGSL_READER=ON `
+            -D TINT_BUILD_WGSL_WRITER=ON `
+            -D TINT_BUILD_MSL_WRITER=ON `
 
-        cmake --build dawn_build --config Release --target webgpu_dawn
+        cmake --build dawn_build_$architecture --config Release --target webgpu_dawn
     }
     elseif ($osLinux) {
 
