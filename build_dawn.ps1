@@ -197,9 +197,9 @@ try {
     }
     elseif ($osMacOS) {
         #copy header to output folder"
-        Copy-Item .\dawn_build\gen\include\dawn\webgpu.h "$outputFolder\webgpu.h"
+        Copy-Item .\dawn_build_$architecture\gen\include\dawn\webgpu.h "$outputFolder\webgpu.h"
         #copy dylib to output folder"
-        Copy-Item .\dawn_build\src\dawn\native\libwebgpu_dawn.dylib "$outputFolder\libwebgpu_dawn.dylib"
+        Copy-Item .\dawn_build_$architecture\src\dawn\native\libwebgpu_dawn.dylib "$outputFolder\libwebgpu_dawn.dylib"
     }
 
     elseif ($osLinux) {
