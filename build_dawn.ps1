@@ -111,6 +111,8 @@ try {
             -D TINT_BUILD_SPV_READER=ON `
             -D TINT_BUILD_SPV_WRITER=ON `
             -D TINT_BUILD_CMD_TOOLS=ON `
+            -D DAWN_FORCE_SYSTEM_COMPONENT_LOAD=ON `
+            -D FORCE_SYSTEM_COMPONENT_LOAD=ON `
 
         Set-Variable -Name "CL" -Value "/Wv:18"
         cmake --build dawn_build_$architecture --config Release --target webgpu_dawn
@@ -143,6 +145,8 @@ try {
             -D DAWN_BUILD_SAMPLES=OFF `
             -D TINT_BUILD_TESTS=OFF `
             -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
+            -D DAWN_FORCE_SYSTEM_COMPONENT_LOAD=ON `
+            -D FORCE_SYSTEM_COMPONENT_LOAD=ON `
 
         cmake --build dawn_build_$architecture --config Release --target webgpu_dawn
     }
@@ -173,6 +177,8 @@ try {
             -D DAWN_ENABLE_SPIRV_VALIDATION=OFF `
             -D DAWN_BUILD_MONOLITHIC_LIBRARY=SHARED `
             -D TINT_BUILD_TESTS=OFF `
+            -D DAWN_FORCE_SYSTEM_COMPONENT_LOAD=ON `
+            -D FORCE_SYSTEM_COMPONENT_LOAD=ON `
 
         cmake --build dawn_build --config Release --target webgpu_dawn
     }
